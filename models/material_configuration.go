@@ -37,18 +37,6 @@ type MaterialConfiguration struct {
 	// Required: true
 	AtomicWeight *float64 `json:"atomicWeight"`
 
-	// cap temperature laser power coef
-	// Required: true
-	CapTemperatureLaserPowerCoef *float64 `json:"capTemperatureLaserPowerCoef"`
-
-	// cap temperature laser speed coef
-	// Required: true
-	CapTemperatureLaserSpeedCoef *float64 `json:"capTemperatureLaserSpeedCoef"`
-
-	// cap temperature offset
-	// Required: true
-	CapTemperatureOffset *float64 `json:"capTemperatureOffset"`
-
 	// created time stamp, set server-side, read only field
 	// Required: true
 	Created *strfmt.DateTime `json:"created"`
@@ -72,30 +60,6 @@ type MaterialConfiguration struct {
 	// energy absorbing rate by solid
 	// Required: true
 	EnergyAbsorbingRateBySolid *float64 `json:"energyAbsorbingRateBySolid"`
-
-	// extinction coef of powder laser power coef
-	// Required: true
-	ExtinctionCoefOfPowderLaserPowerCoef *float64 `json:"extinctionCoefOfPowderLaserPowerCoef"`
-
-	// extinction coef of powder laser speed coef
-	// Required: true
-	ExtinctionCoefOfPowderLaserSpeedCoef *float64 `json:"extinctionCoefOfPowderLaserSpeedCoef"`
-
-	// extinction coef of powder offset
-	// Required: true
-	ExtinctionCoefOfPowderOffset *float64 `json:"extinctionCoefOfPowderOffset"`
-
-	// extinction coef of solid laser power coef
-	// Required: true
-	ExtinctionCoefOfSolidLaserPowerCoef *float64 `json:"extinctionCoefOfSolidLaserPowerCoef"`
-
-	// extinction coef of solid laser speed coef
-	// Required: true
-	ExtinctionCoefOfSolidLaserSpeedCoef *float64 `json:"extinctionCoefOfSolidLaserSpeedCoef"`
-
-	// extinction coef of solid offset
-	// Required: true
-	ExtinctionCoefOfSolidOffset *float64 `json:"extinctionCoefOfSolidOffset"`
 
 	// fusion latent heat
 	// Required: true
@@ -122,6 +86,14 @@ type MaterialConfiguration struct {
 	// material yield strength
 	// Required: true
 	MaterialYieldStrength *float64 `json:"materialYieldStrength"`
+
+	// mean free path of laser in bulk
+	// Required: true
+	MeanFreePathOfLaserInBulk *float64 `json:"meanFreePathOfLaserInBulk"`
+
+	// mean free path of laser in powder
+	// Required: true
+	MeanFreePathOfLaserInPowder *float64 `json:"meanFreePathOfLaserInPowder"`
 
 	// poisson ratio
 	// Required: true
@@ -190,6 +162,11 @@ type MaterialConfiguration struct {
 	// vaporization temperature
 	// Required: true
 	VaporizationTemperature *float64 `json:"vaporizationTemperature"`
+
+	// version label for the material configuration
+	// Required: true
+	// Max Length: 16
+	Version *string `json:"version"`
 }
 
 // Validate validates this material configuration
@@ -217,21 +194,6 @@ func (m *MaterialConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateAtomicWeight(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateCapTemperatureLaserPowerCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateCapTemperatureLaserSpeedCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateCapTemperatureOffset(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -266,36 +228,6 @@ func (m *MaterialConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateExtinctionCoefOfPowderLaserPowerCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateExtinctionCoefOfPowderLaserSpeedCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateExtinctionCoefOfPowderOffset(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateExtinctionCoefOfSolidLaserPowerCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateExtinctionCoefOfSolidLaserSpeedCoef(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateExtinctionCoefOfSolidOffset(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateFusionLatentHeat(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -317,6 +249,16 @@ func (m *MaterialConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateMaterialYieldStrength(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateMeanFreePathOfLaserInBulk(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateMeanFreePathOfLaserInPowder(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -406,6 +348,11 @@ func (m *MaterialConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateVersion(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -457,36 +404,13 @@ func (m *MaterialConfiguration) validateAtomicWeight(formats strfmt.Registry) er
 	return nil
 }
 
-func (m *MaterialConfiguration) validateCapTemperatureLaserPowerCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("capTemperatureLaserPowerCoef", "body", m.CapTemperatureLaserPowerCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateCapTemperatureLaserSpeedCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("capTemperatureLaserSpeedCoef", "body", m.CapTemperatureLaserSpeedCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateCapTemperatureOffset(formats strfmt.Registry) error {
-
-	if err := validate.Required("capTemperatureOffset", "body", m.CapTemperatureOffset); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *MaterialConfiguration) validateCreated(formats strfmt.Registry) error {
 
 	if err := validate.Required("created", "body", m.Created); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
 		return err
 	}
 
@@ -538,60 +462,6 @@ func (m *MaterialConfiguration) validateEnergyAbsorbingRateBySolid(formats strfm
 	return nil
 }
 
-func (m *MaterialConfiguration) validateExtinctionCoefOfPowderLaserPowerCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfPowderLaserPowerCoef", "body", m.ExtinctionCoefOfPowderLaserPowerCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateExtinctionCoefOfPowderLaserSpeedCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfPowderLaserSpeedCoef", "body", m.ExtinctionCoefOfPowderLaserSpeedCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateExtinctionCoefOfPowderOffset(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfPowderOffset", "body", m.ExtinctionCoefOfPowderOffset); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateExtinctionCoefOfSolidLaserPowerCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfSolidLaserPowerCoef", "body", m.ExtinctionCoefOfSolidLaserPowerCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateExtinctionCoefOfSolidLaserSpeedCoef(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfSolidLaserSpeedCoef", "body", m.ExtinctionCoefOfSolidLaserSpeedCoef); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MaterialConfiguration) validateExtinctionCoefOfSolidOffset(formats strfmt.Registry) error {
-
-	if err := validate.Required("extinctionCoefOfSolidOffset", "body", m.ExtinctionCoefOfSolidOffset); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *MaterialConfiguration) validateFusionLatentHeat(formats strfmt.Registry) error {
 
 	if err := validate.Required("fusionLatentHeat", "body", m.FusionLatentHeat); err != nil {
@@ -631,6 +501,24 @@ func (m *MaterialConfiguration) validateMaterialStrainSensitivity(formats strfmt
 func (m *MaterialConfiguration) validateMaterialYieldStrength(formats strfmt.Registry) error {
 
 	if err := validate.Required("materialYieldStrength", "body", m.MaterialYieldStrength); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MaterialConfiguration) validateMeanFreePathOfLaserInBulk(formats strfmt.Registry) error {
+
+	if err := validate.Required("meanFreePathOfLaserInBulk", "body", m.MeanFreePathOfLaserInBulk); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MaterialConfiguration) validateMeanFreePathOfLaserInPowder(formats strfmt.Registry) error {
+
+	if err := validate.Required("meanFreePathOfLaserInPowder", "body", m.MeanFreePathOfLaserInPowder); err != nil {
 		return err
 	}
 
@@ -784,6 +672,19 @@ func (m *MaterialConfiguration) validateVaporizationStartTemperature(formats str
 func (m *MaterialConfiguration) validateVaporizationTemperature(formats strfmt.Registry) error {
 
 	if err := validate.Required("vaporizationTemperature", "body", m.VaporizationTemperature); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MaterialConfiguration) validateVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("version", "body", m.Version); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("version", "body", string(*m.Version), 16); err != nil {
 		return err
 	}
 

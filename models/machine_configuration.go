@@ -64,21 +64,9 @@ type MachineConfiguration struct {
 	// Minimum: 0
 	LaserWaveLength *float64 `json:"laserWaveLength"`
 
-	// delay time between layers, stored in seconds
-	// Required: true
-	// Maximum: 60
-	// Minimum: 0
-	LayerDelay *float64 `json:"layerDelay"`
-
 	// machine identifier for this machine configuration
 	// Required: true
 	MachineID *int32 `json:"machineId"`
-
-	// delay time between scan lines, stored in miliseconds
-	// Required: true
-	// Maximum: 100
-	// Minimum: 0
-	ScanLineDelay *float64 `json:"scanLineDelay"`
 
 	// speed at which laser travels in meters per second
 	// Required: true
@@ -143,17 +131,7 @@ func (m *MachineConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateLayerDelay(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateMachineID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateScanLineDelay(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -216,6 +194,10 @@ func (m *MachineConfiguration) validateCoolingToScanningTimeIncrementRatio(forma
 func (m *MachineConfiguration) validateCreated(formats strfmt.Registry) error {
 
 	if err := validate.Required("created", "body", m.Created); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("created", "body", "date-time", m.Created.String(), formats); err != nil {
 		return err
 	}
 
@@ -299,43 +281,9 @@ func (m *MachineConfiguration) validateLaserWaveLength(formats strfmt.Registry) 
 	return nil
 }
 
-func (m *MachineConfiguration) validateLayerDelay(formats strfmt.Registry) error {
-
-	if err := validate.Required("layerDelay", "body", m.LayerDelay); err != nil {
-		return err
-	}
-
-	if err := validate.Minimum("layerDelay", "body", float64(*m.LayerDelay), 0, false); err != nil {
-		return err
-	}
-
-	if err := validate.Maximum("layerDelay", "body", float64(*m.LayerDelay), 60, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *MachineConfiguration) validateMachineID(formats strfmt.Registry) error {
 
 	if err := validate.Required("machineId", "body", m.MachineID); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MachineConfiguration) validateScanLineDelay(formats strfmt.Registry) error {
-
-	if err := validate.Required("scanLineDelay", "body", m.ScanLineDelay); err != nil {
-		return err
-	}
-
-	if err := validate.Minimum("scanLineDelay", "body", float64(*m.ScanLineDelay), 0, false); err != nil {
-		return err
-	}
-
-	if err := validate.Maximum("scanLineDelay", "body", float64(*m.ScanLineDelay), 100, false); err != nil {
 		return err
 	}
 

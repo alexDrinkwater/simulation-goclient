@@ -75,21 +75,13 @@ func NewPatchSimulationOK() *PatchSimulationOK {
 Successfully patched simulation
 */
 type PatchSimulationOK struct {
-	Payload *models.Simulation
 }
 
 func (o *PatchSimulationOK) Error() string {
-	return fmt.Sprintf("[PATCH /simulations/{id}][%d] patchSimulationOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PATCH /simulations/{id}][%d] patchSimulationOK ", 200)
 }
 
 func (o *PatchSimulationOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.Simulation)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
-		return err
-	}
 
 	return nil
 }

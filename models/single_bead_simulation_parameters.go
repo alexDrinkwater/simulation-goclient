@@ -6,7 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -25,10 +24,6 @@ type SingleBeadSimulationParameters struct {
 	// Maximum: 0.01
 	// Minimum: 0.001
 	BeadLength *float64 `json:"beadLength"`
-
-	// Type of single bead simulation - either bead on plate or bead on powder.
-	// Required: true
-	BeadType *string `json:"beadType"`
 
 	// Array of Powder Laser Absorptivity Values to simulate across, Each value must be between 0% and 100%, expressed as a decimal
 	// Required: true
@@ -51,6 +46,14 @@ type SingleBeadSimulationParameters struct {
 	// Array of Liquidus Temperature Values Values to simulate across
 	// Required: true
 	LiquidusTemperatureValues []float64 `json:"liquidusTemperatureValues"`
+
+	// Array of Mean Free Path of Laser in Powder Values to simulate across, Each value must be between 0 and 1.25e5
+	// Required: true
+	MeanFreePathInPowderValues []*float64 `json:"meanFreePathInPowderValues"`
+
+	// Array of Mean Free Path of Laser in Solid Values to simulate across, Each value must be between 0 and 1.25e5
+	// Required: true
+	MeanFreePathInSolidValues []*float64 `json:"meanFreePathInSolidValues"`
 
 	// Array of Powder Packing Density Percentage Values to simulate across, Each value must be between 0% and 100%, expressed as a decimal
 	// Required: true
@@ -78,11 +81,6 @@ func (m *SingleBeadSimulationParameters) Validate(formats strfmt.Registry) error
 		res = append(res, err)
 	}
 
-	if err := m.validateBeadType(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateLaserAbsorptivityInPowderValues(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -104,6 +102,16 @@ func (m *SingleBeadSimulationParameters) Validate(formats strfmt.Registry) error
 	}
 
 	if err := m.validateLiquidusTemperatureValues(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateMeanFreePathInPowderValues(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateMeanFreePathInSolidValues(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -145,47 +153,6 @@ func (m *SingleBeadSimulationParameters) validateBeadLength(formats strfmt.Regis
 	}
 
 	if err := validate.Maximum("beadLength", "body", float64(*m.BeadLength), 0.01, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var singleBeadSimulationParametersTypeBeadTypePropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["OnPlate","OnPowder"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		singleBeadSimulationParametersTypeBeadTypePropEnum = append(singleBeadSimulationParametersTypeBeadTypePropEnum, v)
-	}
-}
-
-const (
-	// SingleBeadSimulationParametersBeadTypeOnPlate captures enum value "OnPlate"
-	SingleBeadSimulationParametersBeadTypeOnPlate string = "OnPlate"
-	// SingleBeadSimulationParametersBeadTypeOnPowder captures enum value "OnPowder"
-	SingleBeadSimulationParametersBeadTypeOnPowder string = "OnPowder"
-)
-
-// prop value enum
-func (m *SingleBeadSimulationParameters) validateBeadTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, singleBeadSimulationParametersTypeBeadTypePropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *SingleBeadSimulationParameters) validateBeadType(formats strfmt.Registry) error {
-
-	if err := validate.Required("beadType", "body", m.BeadType); err != nil {
-		return err
-	}
-
-	// value enum
-	if err := m.validateBeadTypeEnum("beadType", "body", *m.BeadType); err != nil {
 		return err
 	}
 
@@ -284,6 +251,56 @@ func (m *SingleBeadSimulationParameters) validateLiquidusTemperatureValues(forma
 
 	if err := validate.Required("liquidusTemperatureValues", "body", m.LiquidusTemperatureValues); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *SingleBeadSimulationParameters) validateMeanFreePathInPowderValues(formats strfmt.Registry) error {
+
+	if err := validate.Required("meanFreePathInPowderValues", "body", m.MeanFreePathInPowderValues); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.MeanFreePathInPowderValues); i++ {
+
+		if swag.IsZero(m.MeanFreePathInPowderValues[i]) { // not required
+			continue
+		}
+
+		if err := validate.Minimum("meanFreePathInPowderValues"+"."+strconv.Itoa(i), "body", float64(*m.MeanFreePathInPowderValues[i]), 0, false); err != nil {
+			return err
+		}
+
+		if err := validate.Maximum("meanFreePathInPowderValues"+"."+strconv.Itoa(i), "body", float64(*m.MeanFreePathInPowderValues[i]), 125000, false); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SingleBeadSimulationParameters) validateMeanFreePathInSolidValues(formats strfmt.Registry) error {
+
+	if err := validate.Required("meanFreePathInSolidValues", "body", m.MeanFreePathInSolidValues); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.MeanFreePathInSolidValues); i++ {
+
+		if swag.IsZero(m.MeanFreePathInSolidValues[i]) { // not required
+			continue
+		}
+
+		if err := validate.Minimum("meanFreePathInSolidValues"+"."+strconv.Itoa(i), "body", float64(*m.MeanFreePathInSolidValues[i]), 0, false); err != nil {
+			return err
+		}
+
+		if err := validate.Maximum("meanFreePathInSolidValues"+"."+strconv.Itoa(i), "body", float64(*m.MeanFreePathInSolidValues[i]), 125000, false); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

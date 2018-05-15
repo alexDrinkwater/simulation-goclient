@@ -64,7 +64,7 @@ for the archive material operation typically these are written to a http.Request
 type ArchiveMaterialParams struct {
 
 	/*ID
-	  ID of material to archive
+	  ID of material to archived
 
 	*/
 	ID int32
